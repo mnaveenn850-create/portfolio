@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','sans-serif'],serif:['Newsreader','serif']},colors:{brand:{sky:'#38BDF8',dark:'#050505'}},animation:{'spin-slow':'spin 12s linear infinite','float':'float 6s ease-in-out infinite','border-spin':'border-spin 2.5s linear infinite'},keyframes:{'float':{'0%,100%':{transform:'translateY(0)'},'50%':{transform:'translateY(-20px)'}},'border-spin':{to:{'--gradient-angle':'360deg'}}}}}}
+  </script>
+  <style>
+    @property --gradient-angle{syntax:"<angle>";initial-value:0deg;inherits:false}
+    *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{background:#030303;color:#fff;font-family:'Inter',sans-serif;overflow-x:hidden}
+    ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#050505}::-webkit-scrollbar-thumb{background:rgba(56,189,248,0.3);border-radius:999px}
+    .grid-bg{background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);background-size:100px 100px;mask-image:radial-gradient(circle at center,black 40%,transparent 100%)}
+    .radial-glow{background:radial-gradient(circle at 70% 50%,rgba(56,189,248,0.15) 0%,rgba(5,5,5,0) 60%)}
+    .radial-glow-left{background:radial-gradient(circle at 30% 50%,rgba(56,189,248,0.12) 0%,rgba(5,5,5,0) 60%)}
+    .text-glow{text-shadow:0 0 25px rgba(56,189,248,0.4)}
+    .nav-shadow{box-shadow:0 2.8px 2.2px rgba(0,0,0,0.034),0 12.5px 10px rgba(0,0,0,0.06),0 100px 80px rgba(0,0,0,0.12)}
+    .spotlight-card{position:relative;overflow:hidden}.spotlight-card::before{content:'';position:absolute;inset:0;background:radial-gradient(600px circle at var(--mouse-x,50%) var(--mouse-y,50%),rgba(56,189,248,0.06),transparent 40%);pointer-events:none;opacity:0;transition:opacity 0.5s}.spotlight-card:hover::before{opacity:1}
+    .reveal-section{opacity:0;transform:translateY(40px);transition:opacity 0.8s ease,transform 0.8s ease}.reveal-section.visible{opacity:1;transform:translateY(0)}
+    .toast{transform:translateY(100px);opacity:0;transition:all 0.4s ease}.toast.show{transform:translateY(0);opacity:1}
+    .modal-overlay{opacity:0;pointer-events:none;transition:opacity 0.3s}.modal-overlay.active{opacity:1;pointer-events:all}.modal-content{transform:scale(0.95) translateY(20px);transition:transform 0.3s ease}.modal-overlay.active .modal-content{transform:scale(1) translateY(0)}
+    
+    .edit-only{display:none!important}.edit-actions{display:none!important}[contenteditable="false"]{cursor:default}
+    body.edit-mode .edit-only{display:inline-flex!important}body.edit-mode .edit-actions{display:flex!important}body.edit-mode [contenteditable="true"]{cursor:text}body.edit-mode .photo-upload{cursor:pointer}body.edit-mode .editable-field:hover{background:rgba(56,189,248,0.05)}body.edit-mode .editable-field:focus{background:rgba(56,189,248,0.08);border-color:rgba(56,189,248,0.5);outline:none}
+    body:not(.edit-mode) .photo-upload{cursor:default}body:not(.edit-mode) .photo-overlay{display:none}body:not(.edit-mode) .skill-remove{display:none}body:not(.edit-mode) .timeline-actions{display:none!important}body:not(.edit-mode) .cert-actions{display:none!important}body:not(.edit-mode) .project-actions{display:none!important}
+    
+    /* Social Links Styles */
+    .social-link{transition:all 0.2s ease}.social-link.active-link:hover{transform:translateY(-2px);background:rgba(255,255,255,0.1)}
+    .social-link.empty-link{opacity:0.3;pointer-events:none;border-style:dashed}
+    body.edit-mode .social-link.empty-link{opacity:0.5;pointer-events:all;cursor:pointer}
+    
+    .page-loader{position:fixed;inset:0;z-index:9999;background:#030303;display:flex;align-items:center;justify-content:center;transition:opacity 0.5s,visibility 0.5s}.page-loader.hidden{opacity:0;visibility:hidden}
+    .loader-spinner{width:40px;height:40px;border:3px solid rgba(56,189,248,0.2);border-top-color:#38BDF8;border-radius:50%;animation:spin 0.8s linear infinite}
+    .back-to-top{opacity:0;pointer-events:none;transition:all 0.3s}.back-to-top.visible{opacity:1;pointer-events:all}
+    .typing-cursor{display:inline-block;width:2px;height:1em;background:#38BDF8;margin-left:2px;animation:blink 1s step-end infinite;vertical-align:text-bottom}
+    @keyframes blink{50%{opacity:0}}@keyframes spin{to{transform:rotate(360deg)}}
+    .tab-btn.active{background:white;color:black}.tab-btn{transition:all 0.15s ease}
+    .empty-state{border:2px dashed rgba(255,255,255,0.1);border-radius:1rem;padding:3rem;text-align:center}
+    @media print{body{background:white;color:black}.no-print{display:none!important}.reveal-section{opacity:1!important;transform:none!important}section{break-inside:avoid}}
+  </style>
+</head>
+<body>
+
+<div id="page-loader" class="page-loader"><div class="loader-spinner"></div></div>
+<div id="toast" class="toast fixed bottom-6 right-6 z-[200] bg-emerald-500/90 backdrop-blur-xl text-white font-medium text-sm px-6 py-3 rounded-xl shadow-lg flex items-center gap-2"><span class="iconify" data-icon="solar:check-circle-bold"></span><span id="toast-msg">Saved!</span></div>
+
+<div id="login-modal" class="modal-overlay fixed inset-0 z-[300] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+  <div class="modal-content w-full max-w-sm rounded-2xl border border-white/10 bg-brand-dark p-8 text-center">
+    <div class="w-16 h-16 rounded-full bg-brand-sky/10 flex items-center justify-center mx-auto mb-5"><span class="iconify text-brand-sky text-3xl" data-icon="solar:lock-keyhole-bold"></span></div>
+    <h3 class="text-xl font-semibold mb-2">Edit Mode Locked</h3>
+    <p class="text-sm text-white/40 mb-6">Enter password to unlock</p>
+    <input id="login-pw" type="password" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-brand-sky/50 mb-3 text-center" placeholder="Password" onkeydown="if(event.key==='Enter')attemptLogin()">
+    <button onclick="attemptLogin()" class="w-full bg-white text-black font-semibold text-sm py-3 rounded-xl hover:bg-white/90 transition-all mb-3">Unlock</button>
+    <button onclick="closeLogin()" class="text-xs text-white/40 hover:text-white transition-colors">Cancel</button>
+    <p id="login-err" class="text-xs text-red-400 mt-3 hidden">Incorrect password</p>
+  </div>
+</div>
+
+<div id="modal" class="modal-overlay fixed inset-0 z-[250] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+  <div class="modal-content w-full max-w-md rounded-2xl border border-white/10 bg-brand-dark/95 backdrop-blur-xl p-6">
+    <div class="flex items-center justify-between mb-6"><h3 id="modal-title" class="text-lg font-semibold">Add</h3><button onclick="closeModal()" class="text-white/50 hover:text-white"><span class="iconify text-xl" data-icon="solar:close-circle-linear"></span></button></div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<button id="back-to-top" class="back-to-top no-print fixed bottom-6 left-6 z-[100] w-11 h-11 rounded-full bg-white/10 border border-white/10 backdrop-blur-xl flex items-center justify-center hover:bg-brand-sky/20 hover:border-brand-sky/30 transition-all" onclick="window.scrollTo({top:0,behavior:'smooth'})"><span class="iconify text-white/70 text-lg" data-icon="solar:arrow-up-linear"></span></button>
+
+<nav class="fixed top-6 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-1 px-2 pl-5 py-1.5 rounded-full border border-white/10 bg-brand-dark/70 backdrop-blur-xl nav-shadow no-print">
+  <a href="#" class="flex items-center gap-2 mr-4"><div class="w-7 h-7 rounded-full bg-brand-sky/20 flex items-center justify-center"><span class="iconify text-brand-sky text-sm" data-icon="solar:user-bold"></span></div><span class="text-sm font-medium tracking-tight">My<span class="text-brand-sky">Portfolio</span></span></a>
+  <div class="hidden md:flex items-center gap-1">
+    <a href="#about" class="text-xs font-medium text-white/50 hover:text-white px-3 py-2 rounded-full hover:bg-white/5 transition-all">Profile</a>
+    <a href="#skills" class="text-xs font-medium text-white/50 hover:text-white px-3 py-2 rounded-full hover:bg-white/5 transition-all">Skills</a>
+    <a href="#resume" class="text-xs font-medium text-white/50 hover:text-white px-3 py-2 rounded-full hover:bg-white/5 transition-all">Resume</a>
+    <a href="#certificates" class="text-xs font-medium text-white/50 hover:text-white px-3 py-2 rounded-full hover:bg-white/5 transition-all">Certificates</a>
+    <a href="#projects" class="text-xs font-medium text-white/50 hover:text-white px-3 py-2 rounded-full hover:bg-white/5 transition-all">Projects</a>
+    <a href="#contact" class="text-xs font-medium text-white/50 hover:text-white px-3 py-2 rounded-full hover:bg-white/5 transition-all">Contact</a>
+  </div>
+  <button id="nav-edit-btn" onclick="requestEdit()" class="ml-2 text-xs font-medium text-white/50 bg-white/5 border border-white/10 px-4 py-2 rounded-full hover:bg-white/10 hover:text-white transition-all flex items-center gap-1.5"><span class="iconify text-sm" data-icon="solar:lock-keyhole-linear" id="nav-edit-icon"></span><span id="nav-edit-label">Edit</span></button>
+  <button onclick="exportData()" class="hidden md:inline-flex ml-1 text-xs font-medium text-white/50 bg-white/5 border border-white/10 px-3 py-2 rounded-full hover:bg-white/10 hover:text-white transition-all" title="Export"><span class="iconify text-sm" data-icon="solar:download-minimalistic-bold"></span></button>
+  <button onclick="printResume()" class="hidden md:inline-flex ml-1 text-xs font-medium text-white/50 bg-white/5 border border-white/10 px-3 py-2 rounded-full hover:bg-white/10 hover:text-white transition-all" title="Print / PDF"><span class="iconify text-sm" data-icon="solar:printer-bold"></span></button>
+  <button onclick="shareProfile()" class="hidden md:inline-flex ml-1 text-xs font-medium text-white/50 bg-white/5 border border-white/10 px-3 py-2 rounded-full hover:bg-white/10 hover:text-white transition-all" title="Share"><span class="iconify text-sm" data-icon="solar:share-bold"></span></button>
+  <button id="mobile-toggle" class="md:hidden ml-1 p-2 text-white/70 hover:text-white"><span class="iconify text-lg" data-icon="solar:hamburger-menu-linear"></span></button>
+</nav>
+
+<div id="mobile-menu" class="fixed inset-y-0 right-0 z-[150] w-64 bg-brand-dark/95 backdrop-blur-xl border-l border-white/10 p-8 flex flex-col gap-6 translate-x-full transition-transform duration-300 no-print">
+  <button id="mobile-close" class="self-end text-white/50 hover:text-white"><span class="iconify text-xl" data-icon="solar:close-circle-linear"></span></button>
+  <a href="#about" class="text-sm text-white/70 hover:text-white mobile-link">Profile</a><a href="#skills" class="text-sm text-white/70 hover:text-white mobile-link">Skills</a><a href="#resume" class="text-sm text-white/70 hover:text-white mobile-link">Resume</a><a href="#certificates" class="text-sm text-white/70 hover:text-white mobile-link">Certificates</a><a href="#projects" class="text-sm text-white/70 hover:text-white mobile-link">Projects</a><a href="#contact" class="text-sm text-white/70 hover:text-white mobile-link">Contact</a>
+</div>
+
+<!-- HERO -->
+<section id="about" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+  <div class="absolute inset-0 grid-bg"></div><div class="absolute inset-0 radial-glow"></div>
+  <div class="absolute top-1/4 left-1/4 w-72 h-72 rounded-full bg-brand-sky/5 blur-3xl animate-float"></div>
+  <div class="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-brand-sky/3 blur-3xl animate-float" style="animation-delay:-3s;"></div>
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full border border-white/5 animate-spin-slow"></div>
+  <div class="relative z-10 max-w-4xl mx-auto px-6 text-center">
+    <div class="photo-upload edit-only inline-block mb-6 relative group" onclick="document.getElementById('photo-input').click()">
+      <div class="w-32 h-32 md:w-40 md:h-40 rounded-full border-2 border-dashed border-white/10 hover:border-brand-sky/50 overflow-hidden mx-auto bg-white/5 relative transition-colors">
+        <img id="profile-photo" src="" alt="Profile" class="w-full h-full object-cover hidden" /><div id="photo-placeholder" class="w-full h-full flex items-center justify-center"><span class="iconify text-white/20 text-5xl" data-icon="solar:user-bold"></span></div>
+        <div class="photo-overlay absolute inset-0 bg-black/50 flex items-center justify-center rounded-full"><span class="iconify text-white text-2xl" data-icon="solar:camera-bold"></span></div>
+      </div><input type="file" id="photo-input" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)" />
+    </div>
+    <h1 class="font-serif italic text-5xl md:text-6xl lg:text-7xl tracking-tight leading-[1.1] mb-3"><span contenteditable="false" id="field-name" class="editable-field px-2 rounded-lg border border-transparent focus:border-brand-sky/30 inline-block" data-field="name" data-placeholder="Your Name"></span></h1>
+    <p class="text-brand-sky text-glow text-lg md:text-xl mb-4 min-h-[1.75rem]"><span id="typing-text"></span><span class="typing-cursor"></span></p>
+    <p class="text-white/50 text-base leading-relaxed max-w-2xl mx-auto mb-8"><span contenteditable="false" id="field-bio" class="editable-field px-2 py-1 rounded-lg border border-transparent focus:border-brand-sky/30 inline-block w-full" data-field="bio" data-placeholder="Write something about yourself..."></span></p>
+    <div class="flex flex-wrap items-center justify-center gap-4 mb-8">
+      <div class="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10"><span class="iconify text-brand-sky text-sm" data-icon="solar:letter-bold"></span><span contenteditable="false" id="field-email" class="editable-field text-sm text-white/70 rounded border border-transparent focus:border-brand-sky/30 px-1" data-field="email" data-placeholder="email@example.com"></span></div>
+      <div class="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10"><span class="iconify text-brand-sky text-sm" data-icon="solar:phone-bold"></span><span contenteditable="false" id="field-phone" class="editable-field text-sm text-white/70 rounded border border-transparent focus:border-brand-sky/30 px-1" data-field="phone" data-placeholder="+1 (555) 000-0000"></span></div>
+      <div class="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10"><span class="iconify text-brand-sky text-sm" data-icon="solar:map-point-bold"></span><span contenteditable="false" id="field-location" class="editable-field text-sm text-white/70 rounded border border-transparent focus:border-brand-sky/30 px-1" data-field="location" data-placeholder="City, Country"></span></div>
+    </div>
+    <div class="flex items-center justify-center gap-3 mb-10" id="social-links-container"></div>
+    <div class="flex items-center justify-center gap-8 md:gap-16 pt-8 border-t border-white/5">
+      <div class="text-center"><div class="text-2xl md:text-3xl font-semibold" id="stat-projects">0</div><div class="text-xs text-white/40 mt-1">Projects</div></div>
+      <div class="text-center"><div class="text-2xl md:text-3xl font-semibold" id="stat-experience">0</div><div class="text-xs text-white/40 mt-1">Years Exp</div></div>
+      <div class="text-center"><div class="text-2xl md:text-3xl font-semibold" id="stat-certificates">0</div><div class="text-xs text-white/40 mt-1">Certificates</div></div>
+      <div class="text-center"><div class="text-2xl md:text-3xl font-semibold" id="stat-visitors">0</div><div class="text-xs text-white/40 mt-1">Visitors</div></div>
+    </div>
+    <div class="edit-only justify-center mt-8"><button onclick="saveAllData()" class="inline-flex items-center gap-2 text-xs font-medium text-white/40 hover:text-white bg-white/5 border border-white/10 px-4 py-2 rounded-full transition-all"><span class="iconify" data-icon="solar:diskette-bold"></span> Save All Changes</button></div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills" class="relative py-24 md:py-32 reveal-section">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex items-end justify-between mb-12"><div><span class="text-xs font-medium text-brand-sky tracking-widest uppercase">Abilities</span><h2 class="font-serif italic text-4xl md:text-5xl lg:text-6xl tracking-tight leading-[1.1] mt-4">Skills & <span class="text-brand-sky text-glow">Expertise</span></h2></div><button onclick="openAddSkillModal()" class="edit-only items-center gap-2 text-xs font-semibold bg-white text-black px-5 py-2.5 rounded-full hover:bg-white/90 transition-all"><span class="iconify" data-icon="solar:add-circle-bold"></span> Add Skill</button></div>
+    <div class="flex flex-wrap gap-2 mb-8 no-print"><button class="tab-btn active text-xs font-medium px-4 py-2 rounded-full" data-skill-cat="all">All</button><button class="tab-btn text-xs font-medium px-4 py-2 rounded-full text-white/50 bg-white/5 border border-white/10" data-skill-cat="frontend">Frontend</button><button class="tab-btn text-xs font-medium px-4 py-2 rounded-full text-white/50 bg-white/5 border border-white/10" data-skill-cat="backend">Backend</button><button class="tab-btn text-xs font-medium px-4 py-2 rounded-full text-white/50 bg-white/5 border border-white/10" data-skill-cat="tools">Tools</button><button class="tab-btn text-xs font-medium px-4 py-2 rounded-full text-white/50 bg-white/5 border border-white/10" data-skill-cat="soft">Soft Skills</button></div>
+    <div id="skills-container"></div>
+  </div>
+</section>
+
+<!-- RESUME -->
+<section id="resume" class="relative py-24 md:py-32 border-y border-white/5 reveal-section">
+  <div class="absolute inset-0 radial-glow-left"></div>
+  <div class="relative max-w-7xl mx-auto px-6">
+    <div class="mb-12"><span class="text-xs font-medium text-brand-sky tracking-widest uppercase">Experience</span><h2 class="font-serif italic text-4xl md:text-5xl lg:text-6xl tracking-tight leading-[1.1] mt-4">My <span class="text-brand-sky text-glow">Resume</span></h2></div>
+    <div class="flex gap-2 mb-10 no-print"><button class="resume-tab active text-xs font-semibold bg-white text-black px-5 py-2.5 rounded-full" data-tab="experience">Experience</button><button class="resume-tab text-xs font-medium text-white/50 bg-white/5 border border-white/10 px-5 py-2.5 rounded-full" data-tab="education">Education</button></div>
+    <div id="experience-tab" class="resume-tab-content"><div class="flex justify-end mb-6 no-print"><button onclick="openAddExperienceModal()" class="edit-only items-center gap-2 text-xs font-semibold bg-brand-sky/20 text-brand-sky px-4 py-2 rounded-full hover:bg-brand-sky/30 border border-brand-sky/20"><span class="iconify" data-icon="solar:add-circle-bold"></span> Add Experience</button></div><div id="experience-container"></div></div>
+    <div id="education-tab" class="resume-tab-content hidden"><div class="flex justify-end mb-6 no-print"><button onclick="openAddEducationModal()" class="edit-only items-center gap-2 text-xs font-semibold bg-brand-sky/20 text-brand-sky px-4 py-2 rounded-full hover:bg-brand-sky/30 border border-brand-sky/20"><span class="iconify" data-icon="solar:add-circle-bold"></span> Add Education</button></div><div id="education-container"></div></div>
+  </div>
+</section>
+
+<!-- CERTIFICATES -->
+<section id="certificates" class="relative py-24 md:py-32 reveal-section">
+  <div class="absolute inset-0 radial-glow"></div>
+  <div class="relative max-w-7xl mx-auto px-6">
+    <div class="flex items-end justify-between mb-12"><div><span class="text-xs font-medium text-brand-sky tracking-widest uppercase">Credentials</span><h2 class="font-serif italic text-4xl md:text-5xl lg:text-6xl tracking-tight leading-[1.1] mt-4">Certificates & <span class="text-brand-sky text-glow">Awards</span></h2></div><button onclick="openAddCertModal()" class="edit-only items-center gap-2 text-xs font-semibold bg-white text-black px-5 py-2.5 rounded-full hover:bg-white/90"><span class="iconify" data-icon="solar:add-circle-bold"></span> Add Certificate</button></div>
+    <div id="certificates-container"></div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" class="relative py-24 md:py-32 border-y border-white/5 reveal-section">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex items-end justify-between mb-12"><div><span class="text-xs font-medium text-brand-sky tracking-widest uppercase">Portfolio</span><h2 class="font-serif italic text-4xl md:text-5xl lg:text-6xl tracking-tight leading-[1.1] mt-4">Featured <span class="text-brand-sky text-glow">Projects</span></h2></div><button onclick="openAddProjectModal()" class="edit-only items-center gap-2 text-xs font-semibold bg-white text-black px-5 py-2.5 rounded-full hover:bg-white/90"><span class="iconify" data-icon="solar:add-circle-bold"></span> Add Project</button></div>
+    <div id="projects-container"></div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="relative py-24 md:py-32 reveal-section">
+  <div class="absolute inset-0 radial-glow"></div>
+  <div class="relative max-w-3xl mx-auto px-6">
+    <div class="text-center mb-12"><span class="text-xs font-medium text-brand-sky tracking-widest uppercase">Get In Touch</span><h2 class="font-serif italic text-4xl md:text-5xl tracking-tight leading-[1.1] mt-4">Send Me a <span class="text-brand-sky text-glow">Message</span></h2></div>
+    <form id="contact-form" class="p-8 rounded-2xl border border-white/10 bg-white/[0.02] space-y-5">
+      <div class="grid sm:grid-cols-2 gap-4"><div><label class="text-xs text-white/40 mb-1 block">Name</label><input id="c-name" type="text" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-brand-sky/50" placeholder="Your name"></div><div><label class="text-xs text-white/40 mb-1 block">Email</label><input id="c-email" type="email" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-brand-sky/50" placeholder="you@email.com"></div></div>
+      <div><label class="text-xs text-white/40 mb-1 block">Subject</label><input id="c-subject" type="text" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-brand-sky/50" placeholder="What's this about?"></div>
+      <div><label class="text-xs text-white/40 mb-1 block">Message</label><textarea id="c-message" rows="4" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-brand-sky/50 resize-none" placeholder="Your message..."></textarea></div>
+      <button type="submit" class="w-full bg-white text-black font-semibold text-sm py-4 rounded-xl hover:bg-white/90 flex items-center justify-center gap-2">Send Message <span class="iconify" data-icon="solar:arrow-right-linear"></span></button>
+    </form>
+  </div>
+</section>
+
+<footer class="border-t border-white/5 py-12"><div class="max-w-7xl mx-auto px-6 text-center"><p class="text-sm text-white/30">© 2024 <span id="footer-name">Portfolio</span>. Built with passion.</p><p class="text-xs text-white/20 mt-2"><span id="visitor-count-footer">0</span> visitors</p></div></footer>
+
+<script>
+let D={},isEdit=false,sessionPw='',skillFilter='all',nid=1;
+const socials=[{key:'github',icon:'mdi:github',label:'GitHub'},{key:'linkedin',icon:'mdi:linkedin',label:'LinkedIn'},{key:'twitter',icon:'mdi:twitter',label:'Twitter / X'},{key:'instagram',icon:'mdi:instagram',label:'Instagram'},{key:'youtube',icon:'mdi:youtube',label:'YouTube'},{key:'dribbble',icon:'mdi:palette',label:'Dribbble'}];
+const emptyData=()=>({name:'',title:'',bio:'',email:'',phone:'',location:'',photo:'',socials:{github:'',linkedin:'',twitter:'',instagram:'',youtube:'',dribbble:''},skills:[],experience:[],education:[],certificates:[],projects:[]});
+
+async function loadData(){try{const r=await fetch('/api/data');D=await r.json();if(!D.socials)D.socials={github:'',linkedin:'',twitter:'',instagram:'',youtube:'',dribbble:''};}catch(e){D=emptyData();}}
+async function saveData(){if(!sessionPw){showToast('Unlock edit mode first!');return;}try{const r=await fetch('/api/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:sessionPw,data:D})});const res=await r.json();if(res.success)showToast('Saved!');else showToast('Failed: '+res.message);}catch(e){showToast('Server error!');}}
+async function saveAllData(){D.name=gc('field-name');D.bio=gc('field-bio');D.email=gc('field-email');D.phone=gc('field-phone');D.location=gc('field-location');await saveData();updateStats();document.getElementById('footer-name').textContent=D.name||'Portfolio';}
+function gc(id){const el=document.getElementById(id);const ph=el.dataset.placeholder;return el.textContent===ph?'':el.textContent.trim();}
+
+function requestEdit(){if(isEdit){isEdit=false;sessionPw='';document.body.classList.remove('edit-mode');setEditable(false);updateEditBtn();renderSocials();showToast('Locked');}else{document.getElementById('login-modal').classList.add('active');document.getElementById('login-pw').focus();}}
+async function attemptLogin(){const pw=document.getElementById('login-pw').value;try{const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})});const d=await r.json();if(d.success){isEdit=true;sessionPw=pw;document.body.classList.add('edit-mode');setEditable(true);updateEditBtn();renderSocials();closeLogin();document.getElementById('login-err').classList.add('hidden');document.getElementById('login-pw').value='';showToast('Edit Mode Unlocked!');}else{document.getElementById('login-err').classList.remove('hidden');document.getElementById('login-pw').value='';document.getElementById('login-pw').focus();}}catch(e){showToast('Server error!');}}
+function closeLogin(){document.getElementById('login-modal').classList.remove('active');}
+function setEditable(v){document.querySelectorAll('[contenteditable]').forEach(el=>{el.contentEditable=v?'true':'false';if(v)applyPlaceholder(el);else clearPlaceholder(el);});}
+function updateEditBtn(){const i=document.getElementById('nav-edit-icon'),l=document.getElementById('nav-edit-label'),b=document.getElementById('nav-edit-btn');if(isEdit){i.setAttribute('data-icon','solar:lock-unlock-bold');l.textContent='Lock';b.classList.add('bg-brand-sky/20','text-brand-sky','border-brand-sky/30');b.classList.remove('text-white/50','bg-white/5','border-white/10');}else{i.setAttribute('data-icon','solar:lock-keyhole-linear');l.textContent='Edit';b.classList.remove('bg-brand-sky/20','text-brand-sky','border-brand-sky/30');b.classList.add('text-white/50','bg-white/5','border-white/10');}}
+
+function applyPlaceholder(el){const ph=el.dataset.placeholder;if(!ph)return;if(!el.textContent.trim()){el.textContent=ph;el.classList.add('text-white/20','italic');}el.onfocus=()=>{if(el.textContent===ph){el.textContent='';el.classList.remove('text-white/20','italic');}};el.onblur=()=>{if(!el.textContent.trim()){el.textContent=ph;el.classList.add('text-white/20','italic');}};}
+function clearPlaceholder(el){const ph=el.dataset.placeholder;if(!ph)return;if(el.textContent===ph){el.textContent='';el.classList.remove('text-white/20','italic');}}
+
+let typingTimer;
+function startTyping(){const text=D.title||'Welcome to My Portfolio';let i=0;const el=document.getElementById('typing-text');el.textContent='';clearInterval(typingTimer);typingTimer=setInterval(()=>{if(i<text.length){el.textContent+=text.charAt(i);i++;}else{clearInterval(typingTimer);}},80);}
+function emptyState(icon,msg){return `<div class="empty-state"><span class="iconify text-white/10 text-4xl mb-3 block mx-auto" data-icon="${icon}"></span><p class="text-sm text-white/20">${msg}</p></div>`;}
+
+function renderAll(){
+  const fields={name:'field-name',bio:'field-bio',email:'field-email',phone:'field-phone',location:'field-location'};
+  Object.entries(fields).forEach(([k,id])=>{const el=document.getElementById(id);if(D[k]&&D[k].trim()){el.textContent=D[k];el.classList.remove('text-white/20','italic');}else if(isEdit)applyPlaceholder(el);});
+  document.getElementById('footer-name').textContent=D.name||'Portfolio';
+  if(D.photo){document.getElementById('profile-photo').src=D.photo;document.getElementById('profile-photo').classList.remove('hidden');document.getElementById('photo-placeholder').classList.add('hidden');}
+  renderSocials();renderSkills();renderExp();renderEdu();renderCerts();renderProj();updateStats();loadVisitors();startTyping();if(isEdit)setEditable(true);
+}
+function updateStats(){document.getElementById('stat-projects').textContent=D.projects.length;document.getElementById('stat-experience').textContent=D.experience.length>0?D.experience.length+3:0;document.getElementById('stat-certificates').textContent=D.certificates.length;}
+
+// ===== SOCIALS (FULLY FIXED) =====
+function renderSocials(){
+  let html='';
+  socials.forEach(p=>{
+    let url=D.socials[p.key]||''; 
+    let hasUrl=url.trim().length>0;
+    
+    // Auto-add https:// if user forgot it
+    let safeUrl='#';
+    if(hasUrl){safeUrl=url.startsWith('http')?url:'https://'+url;}
+
+    if(hasUrl){
+      // ACTIVE LINK: Bright, opens in new tab
+      html+=`<a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="social-link active-link w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center transition-all" title="${p.label}"><span class="iconify text-white/70 text-lg" data-icon="${p.icon}"></span></a>`;
+    }else{
+      // EMPTY LINK: Faded, dashed. Visitors can't click. In Edit Mode, clicking opens modal.
+      html+=`<a href="#" onclick="event.preventDefault();openEditSocialModal()" class="social-link empty-link w-10 h-10 rounded-full bg-white/5 border border-dashed border-white/10 flex items-center justify-center transition-all" title="Add ${p.label}"><span class="iconify text-white/30 text-lg" data-icon="${p.icon}"></span></a>`;
+    }
+  });
+  html+=`<button onclick="openEditSocialModal()" class="edit-only items-center gap-1 text-xs font-medium text-brand-sky bg-brand-sky/10 border border-brand-sky/20 px-3 py-2 rounded-full hover:bg-brand-sky/20 transition-all ml-1"><span class="iconify text-sm" data-icon="solar:pen-bold"></span> Edit Links</button>`;
+  document.getElementById('social-links-container').innerHTML=html;
+}
+
+function openEditSocialModal(){
+  let fields='';socials.forEach(p=>{fields+=`<div><label class="text-xs text-white/40 mb-1 block">${p.label} URL</label><input id="m-social-${p.key}" type="url" value="${D.socials[p.key]||''}" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-brand-sky/50 transition-all" placeholder="https://${p.key}.com/yourprofile"></div>`;});
+  openModal('Edit Social Links',`<div class="space-y-4">${fields}<p class="text-xs text-white/30">Tip: You can paste with or without https://</p><button onclick="saveSocialModal()" class="w-full bg-white text-black font-semibold text-sm py-3 rounded-xl hover:bg-white/90 transition-all">Save Links</button></div>`);
+}
+function saveSocialModal(){socials.forEach(p=>{D.socials[p.key]=document.getElementById('m-social-'+p.key).value.trim();});saveData();renderSocials();closeModal();showToast('Links updated!');}
+
+function renderSkills(){const c=document.getElementById('skills-container');const f=skillFilter==='all'?D.skills:D.skills.filter(s=>s.category===skillFilter);if(!f.length){c.innerHTML=emptyState('solar:star-bold','No skills yet. Click "Add Skill" to get started.');return;}c.innerHTML=`<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">${f.map(s=>`<div class="spotlight-card group p-5 rounded-2xl border border-white/10 bg-white/[0.02] hover:border-brand-sky/30 transition-all duration-500"><div class="flex items-center justify-between mb-3"><span class="text-sm font-medium">${s.name}</span><div class="flex items-center gap-2"><span class="text-xs text-brand-sky font-medium">${s.level}%</span><button onclick="rmSkill(${s.id})" class="edit-actions w-6 h-6 rounded-full bg-red-500/20 items-center justify-center hover:bg-red-500/40 transition-colors"><span class="iconify text-red-400 text-xs" data-icon="solar:close-circle-bold"></span></button></div></div><div class="w-full h-1.5 bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r from-brand-sky to-cyan-400 rounded-full" style="width:${s.level}%"></div></div><div class="mt-2"><span class="text-[10px] text-white/30 uppercase tracking-widest">${s.category}</span></div></div>`).join('')}</div>`;}
+function rmSkill(id){D.skills=D.skills.filter(s=>s.id!==id);saveData();renderSkills();updateStats();}
+
+function renderExp(){const c=document.getElementById('experience-container');if(!D.experience.length){c.innerHTML=emptyState('solar:case-bold','No experience added yet.');return;}c.innerHTML=D.experience.map(e=>`<div class="timeline-item group relative p-6 rounded-2xl border border-white/10 bg-white/[0.02] hover:border-white/20 transition-all"><div class="timeline-actions edit-actions absolute top-4 right-4 flex gap-2"><button onclick="rmExp(${e.id})" class="w-7 h-7 rounded-full bg-red-500/20 flex items-center justify-center hover:bg-red-500/40 transition-colors"><span class="iconify text-red-400 text-xs" data-icon="solar:trash-bin-trash-bold"></span></button></div><div class="flex items-center gap-3 mb-3"><div class="w-10 h-10 rounded-xl bg-brand-sky/10 flex items-center justify-center flex-shrink-0"><span class="iconify text-brand-sky text-lg" data-icon="solar:case-bold"></span></div><div><h3 class="text-base font-semibold tracking-tight">${e.role}</h3><p class="text-sm text-white/50">${e.company}</p></div></div><span class="inline-block text-xs text-brand-sky bg-brand-sky/10 px-3 py-1 rounded-full mb-3">${e.period}</span><p class="text-sm text-white/40 leading-relaxed">${e.description}</p></div>`).join('');}
+function rmExp(id){D.experience=D.experience.filter(e=>e.id!==id);saveData();renderExp();updateStats();}
+
+function renderEdu(){const c=document.getElementById('education-container');if(!D.education.length){c.innerHTML=emptyState('solar:square-academic-cap-bold','No education added yet.');return;}c.innerHTML=D.education.map(e=>`<div class="timeline-item group relative p-6 rounded-2xl border border-white/10 bg-white/[0.02] hover:border-white/20 transition-all"><div class="timeline-actions edit-actions absolute top-4 right-4 flex gap-2"><button onclick="rmEdu(${e.id})" class="w-7 h-7 rounded-full bg-red-500/20 flex items-center justify-center hover:bg-red-500/40 transition-colors"><span class="iconify text-red-400 text-xs" data-icon="solar:trash-bin-trash-bold"></span></button></div><div class="flex items-center gap-3 mb-3"><div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center flex-shrink-0"><span class="iconify text-emerald-400 text-lg" data-icon="solar:square-academic-cap-bold"></span></div><div><h3 class="text-base font-semibold tracking-tight">${e.degree}</h3><p class="text-sm text-white/50">${e.school}</p></div></div><span class="inline-block text-xs text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full mb-3">${e.period}</span><p class="text-sm text-white/40 leading-relaxed">${e.description}</p></div>`).join('');}
+function rmEdu(id){D.education=D.education.filter(e=>e.id!==id);saveData();renderEdu();}
+
+function renderCerts(){const c=document.getElementById('certificates-container');if(!D.certificates.length){c.innerHTML=emptyState('solar:diploma-verified-bold','No certificates added yet.');return;}c.innerHTML=`<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">${D.certificates.map(c=>`<div class="cert-card group relative rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden hover:border-brand-sky/30 transition-all duration-500">${c.image?`<div class="aspect-video overflow-hidden"><img src="${c.image}" alt="${c.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"></div>`:`<div class="aspect-video bg-gradient-to-br from-brand-sky/10 to-purple-500/10 flex items-center justify-center"><span class="iconify text-brand-sky/30 text-6xl" data-icon="solar:diploma-verified-bold"></span></div>`}<div class="p-5"><div class="cert-actions edit-actions absolute top-3 right-3"><button onclick="rmCert(${c.id})" class="w-7 h-7 rounded-full bg-red-500/20 backdrop-blur-xl flex items-center justify-center hover:bg-red-500/40 transition-colors"><span class="iconify text-red-400 text-xs" data-icon="solar:trash-bin-trash-bold"></span></button></div><h3 class="text-sm font-semibold mb-1 tracking-tight">${c.name}</h3><p class="text-xs text-white/40 mb-2">${c.issuer}</p><div class="flex items-center justify-between"><span class="text-xs text-brand-sky bg-brand-sky/10 px-2 py-0.5 rounded-full">${c.date}</span>${c.credentialId?`<span class="text-[10px] text-white/20 font-mono">${c.credentialId}</span>`:''}</div></div></div>`).join('')}</div>`;}
+function rmCert(id){D.certificates=D.certificates.filter(c=>c.id!==id);saveData();renderCerts();updateStats();}
+
+function renderProj(){const c=document.getElementById('projects-container');if(!D.projects.length){c.innerHTML=emptyState('solar:folder-bold','No projects added yet.');return;}c.innerHTML=`<div class="grid md:grid-cols-2 gap-4">${D.projects.map(p=>`<div class="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/[0.02] hover:border-brand-sky/30 transition-all duration-500"><div class="aspect-[16/10] overflow-hidden relative"><img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"><div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-transparent to-transparent"></div><div class="project-actions edit-actions absolute top-3 right-3"><button onclick="rmProj(${p.id})" class="w-8 h-8 rounded-full bg-red-500/20 backdrop-blur-xl flex items-center justify-center hover:bg-red-500/40 transition-colors"><span class="iconify text-red-400 text-xs" data-icon="solar:trash-bin-trash-bold"></span></button></div></div><div class="p-5"><h3 class="text-base font-semibold tracking-tight mb-1">${p.name}</h3><p class="text-sm text-white/40 leading-relaxed mb-3">${p.description}</p><div class="flex items-center justify-between"><span class="text-xs text-white/30">${p.tech}</span><a href="${p.link}" target="_blank" rel="noopener noreferrer" class="text-xs text-brand-sky hover:underline flex items-center gap-1">View <span class="iconify text-xs" data-icon="solar:arrow-right-linear"></span></a></div></div></div>`).join('')}</div>`;}
+function rmProj(id){D.projects=D.projects.filter(p=>p.id!==id);saveData();renderProj();updateStats();}
+
+function handlePhotoUpload(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=x=>{D.photo=x.target.result;document.getElementById('profile-photo').src=x.target.result;document.getElementById('profile-photo').classList.remove('hidden');document.getElementById('photo-placeholder').classList.add('hidden');saveData();};r.readAsDataURL(f);}
+async function loadVisitors(){try{const r=await fetch('/api/visitors');const d=await r.json();document.getElementById('stat-visitors').textContent=d.count;document.getElementById('visitor-count-footer').textContent=d.count;}catch(e){}}
+
+function openModal(t,b){document.getElementById('modal-title').textContent=t;document.getElementById('modal-body').innerHTML=b;document.getElementById('modal').classList.add('active');}
+function closeModal(){document.getElementById('modal').classList.remove('active');}
+const I='class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-brand-sky/50 transition-all"';
+
+function openAddSkillModal(){openModal('Add Skill',`<div class="space-y-4"><div><label class="text-xs text-white/40 mb-1 block">Skill Name</label><input id="m-sk-n" type="text" ${I} placeholder="e.g. React"></div><div><label class="text-xs text-white/40 mb-1 block">Level: <span id="m-sk-lv">75</span>%</label><input id="m-sk-l" type="range" min="10" max="100" value="75" class="w-full accent-brand-sky" oninput="document.getElementById('m-sk-lv').textContent=this.value"></div><div><label class="text-xs text-white/40 mb-1 block">Category</label><select id="m-sk-c" ${I}><option value="frontend">Frontend</option><option value="backend">Backend</option><option value="tools">Tools</option><option value="soft">Soft Skills</option></select></div><button onclick="addSkill()" class="w-full bg-white text-black font-semibold text-sm py-3 rounded-xl hover:bg-white/90 transition-all">Add Skill</button></div>`);}
+function addSkill(){const n=document.getElementById('m-sk-n').value.trim();if(!n)return;D.skills.push({id:nid++,name:n,level:+document.getElementById('m-sk-l').value,category:document.getElementById('m-sk-c').value});saveData();renderSkills();closeModal();showToast('Skill added!');}
+
+function openAddExperienceModal(){openModal('Add Experience',`<div class="space-y-4"><div><label class="text-xs text-white/40 mb-1 block">Job Title</label><input id="m-ex-r" type="text" ${I} placeholder="e.g. Senior Developer"></div><div><label class="text-xs text-white/40 mb-1 block">Company</label><input id="m-ex-c" type="text" ${I} placeholder="e.g. Google"></div><div><label class="text-xs text-white/40 mb-1 block">Period</label><input id="m-ex-p" type="text" ${I} placeholder="e.g. 2023 - Present"></div><div><label class="text-xs text-white/40 mb-1 block">Description</label><textarea id="m-ex-d" rows="3" ${I} placeholder="What did you do?"></textarea></div><button onclick="addExp()" class="w-full bg-white text-black font-semibold text-sm py-3 rounded-xl hover:bg-white/90 transition-all">Add</button></div>`);}
+function addExp(){const r=document.getElementById('m-ex-r').value.trim();if(!r)return;D.experience.unshift({id:nid++,role:r,company:document.getElementById('m-ex-c').value.trim(),period:document.getElementById('m-ex-p').value.trim(),description:document.getElementById('m-ex-d').value.trim()});saveData();renderExp();closeModal();showToast('Experience added!');}
+
+function openAddEducationModal(){openModal('Add Education',`<div class="space-y-4"><div><label class="text-xs text-white/40 mb-1 block">Degree</label><input id="m-ed-d" type="text" ${I} placeholder="e.g. B.S. Computer Science"></div><div><label class="text-xs text-white/40 mb-1 block">School</label><input id="m-ed-s" type="text" ${I} placeholder="e.g. MIT"></div><div><label class="text-xs text-white/40 mb-1 block">Period</label><input id="m-ed-p" type="text" ${I} placeholder="e.g. 2018 - 2022"></div><div><label class="text-xs text-white/40 mb-1 block">Description</label><textarea id="m-ed-de" rows="3" ${I} placeholder="Achievements..."></textarea></div><button onclick="addEdu()" class="w-full bg-white text-black font-semibold text-sm py-3 rounded-xl hover:bg-white/90 transition-all">Add</button></div>`);}
+function addEdu(){const d=document.getElementById('m-ed-d').value.trim();if(!d)return;D.education.unshift({id:nid++,degree:d,school:document.getElementById('m-ed-s').value.trim(),period:document.getElementById('m-ed-p').value.trim(),description:document.getElementById('m-ed-de').value.trim()});saveData();renderEdu();closeModal();showToast('Education added!');}
+
+function openAddCertModal(){openModal('Add Certificate',`<div class="space-y-4"><div><label class="text-xs text-white/40 mb-1 block">Name</label><input id="m-ce-n" type="text" ${I} placeholder="e.g. AWS Certified"></div><div><label class="text-xs text-white/40 mb-1 block">Issuer</label><input id="m-ce-i" type="text" ${I} placeholder="e.g. Amazon"></div><div><label class="text-xs text-white/40 mb-1 block">Date</label><input id="m-ce-d" type="text" ${I} placeholder="e.g. 2024"></div><div><label class="text-xs text-white/40 mb-1 block">Credential ID</label><input id="m-ce-c" type="text" ${I} placeholder="Optional"></div><div><label class="text-xs text-white/40 mb-1 block">Image</label><input id="m-ce-im" type="file" accept="image/*" ${I}></div><button onclick="addCert()" class="w-full bg-white text-black font-semibold text-sm py-3 rounded-xl hover:bg-white/90 transition-all">Add</button></div>`);}
+function addCert(){const n=document.getElementById('m-ce-n').value.trim();if(!n)return;const f=document.getElementById('m-ce-im').files[0];const cert={id:nid++,name:n,issuer:document.getElementById('m-ce-i').value.trim(),date:document.getElementById('m-ce-d').value.trim(),credentialId:document.getElementById('m-ce-c').value.trim(),image:''};if(f){const r=new FileReader();r.onload=x=>{cert.image=x.target.result;D.certificates.unshift(cert);saveData();renderCerts();updateStats();closeModal();showToast('Certificate added!');};r.readAsDataURL(f);}else{D.certificates.unshift(cert);saveData();renderCerts();updateStats();closeModal();showToast('Certificate added!');}}
+
+function openAddProjectModal(){openModal('Add Project',`<div class="space-y-4"><div><label class="text-xs text-white/40 mb-1 block">Name</label><input id="m-pr-n" type="text" ${I} placeholder="e.g. My App"></div><div><label class="text-xs text-white/40 mb-1 block">Description</label><textarea id="m-pr-d" rows="3" ${I} placeholder="What does it do?"></textarea></div><div><label class="text-xs text-white/40 mb-1 block">Tech Stack</label><input id="m-pr-t" type="text" ${I} placeholder="e.g. React, Node.js"></div><div><label class="text-xs text-white/40 mb-1 block">Link</label><input id="m-pr-l" type="url" ${I} placeholder="https://..."></div><div><label class="text-xs text-white/40 mb-1 block">Screenshot</label><input id="m-pr-im" type="file" accept="image/*" ${I}></div><button onclick="addProj()" class="w-full bg-white text-black font-semibold text-sm py-3 rounded-xl hover:bg-white/90 transition-all">Add</button></div>`);}
+function addProj(){const n=document.getElementById('m-pr-n').value.trim();if(!n)return;const f=document.getElementById('m-pr-im').files[0];const proj={id:nid++,name:n,description:document.getElementById('m-pr-d').value.trim(),tech:document.getElementById('m-pr-t').value.trim(),link:document.getElementById('m-pr-l').value.trim()||'#',image:'https://picsum.photos/seed/'+n.replace(/\s/g,'-')+'/800/500.jpg'};if(f){const r=new FileReader();r.onload=x=>{proj.image=x.target.result;D.projects.unshift(proj);saveData();renderProj();updateStats();closeModal();showToast('Project added!');};r.readAsDataURL(f);}else{D.projects.unshift(proj);saveData();renderProj();updateStats();closeModal();showToast('Project added!');}}
+
+function exportData(){const j=JSON.stringify(D,null,2);const b=new Blob([j],{type:'application/json'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='portfolio-data.json';a.click();URL.revokeObjectURL(u);showToast('Exported!');}
+function printResume(){window.print();}
+function shareProfile(){if(navigator.clipboard){navigator.clipboard.writeText(window.location.href).then(()=>showToast('Link copied!'));}else showToast('Copy not supported');}
+function showToast(msg){const t=document.getElementById('toast');document.getElementById('toast-msg').textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+document.getElementById('contact-form').addEventListener('submit',async e=>{e.preventDefault();const msg={name:document.getElementById('c-name').value.trim(),email:document.getElementById('c-email').value.trim(),subject:document.getElementById('c-subject').value.trim(),message:document.getElementById('c-message').value.trim(),date:new Date().toISOString()};if(!msg.name||!msg.email||!msg.message)return;try{const r=await fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(msg)});const res=await r.json();if(res.success){showToast('Message sent!');document.getElementById('contact-form').reset();}else showToast('Failed');}catch(e){showToast('Server error!');}});
+
+document.getElementById('mobile-toggle').addEventListener('click',()=>{document.getElementById('mobile-menu').style.transform='translateX(0)';});
+document.getElementById('mobile-close').addEventListener('click',()=>{document.getElementById('mobile-menu').style.transform='translateX(100%)';});
+document.querySelectorAll('.mobile-link').forEach(l=>l.addEventListener('click',()=>{document.getElementById('mobile-menu').style.transform='translateX(100%)';}));
+const rObs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible')}),{threshold:0.1});document.querySelectorAll('.reveal-section').forEach(s=>rObs.observe(s));
+document.querySelectorAll('[data-skill-cat]').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('[data-skill-cat]').forEach(b=>{b.classList.remove('active','bg-white','text-black');b.classList.add('text-white/50','bg-white/5','border','border-white/10');});btn.classList.add('active','bg-white','text-black');btn.classList.remove('text-white/50','bg-white/5','border','border-white/10');skillFilter=btn.dataset.skillCat;renderSkills();});});
+document.querySelectorAll('.resume-tab').forEach(tab=>{tab.addEventListener('click',()=>{document.querySelectorAll('.resume-tab').forEach(t=>{t.classList.remove('active','bg-white','text-black','font-semibold');t.classList.add('text-white/50','bg-white/5','border','border-white/10','font-medium');});tab.classList.add('active','bg-white','text-black','font-semibold');tab.classList.remove('text-white/50','bg-white/5','border','border-white/10','font-medium');document.querySelectorAll('.resume-tab-content').forEach(c=>c.classList.add('hidden'));document.getElementById(tab.dataset.tab+'-tab').classList.remove('hidden');});});
+document.addEventListener('mousemove',e=>{document.querySelectorAll('.spotlight-card').forEach(c=>{const r=c.getBoundingClientRect();c.style.setProperty('--mouse-x',`${e.clientX-r.left}px`);c.style.setProperty('--mouse-y',`${e.clientY-r.top}px`);});});
+document.querySelectorAll('[contenteditable]').forEach(el=>{el.addEventListener('blur',()=>{if(!isEdit)return;const f=el.dataset.field;if(f){const ph=el.dataset.placeholder;D[f]=el.textContent===ph?'':el.textContent.trim();saveData();if(f==='name')document.getElementById('footer-name').textContent=D.name||'Portfolio';}});});
+window.addEventListener('scroll',()=>{const n=document.querySelector('nav');if(window.scrollY>100){n.style.borderColor='rgba(255,255,255,0.15)';n.style.background='rgba(5,5,5,0.9)';}else{n.style.borderColor='rgba(255,255,255,0.1)';n.style.background='rgba(5,5,5,0.7)';}const b=document.getElementById('back-to-top');if(window.scrollY>600)b.classList.add('visible');else b.classList.remove('visible');});
+document.getElementById('modal').addEventListener('click',e=>{if(e.target===document.getElementById('modal'))closeModal();});
+document.getElementById('login-modal').addEventListener('click',e=>{if(e.target===document.getElementById('login-modal'))closeLogin();});
+document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',function(e){e.preventDefault();const t=document.querySelector(this.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth',block:'start'});}));
+
+loadData().then(()=>{renderAll();setTimeout(()=>{document.getElementById('page-loader').classList.add('hidden');},600);});
+</script>
+</body>
+</html>

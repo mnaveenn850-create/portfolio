@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Environment variables (keeps your passwords safe)
+.env
+
+# Logs
+npm-debug.log*
+
+# OS generated files
+.DS_Store
+.DS_Store?
+Thumbs.db
+
+# Your local database files 
+# (We ignore these so you don't accidentally overwrite the live server's data)
+data.json
+messages.json
+visitors.json
